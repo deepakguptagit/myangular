@@ -140,4 +140,31 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'gives up on watches after 10 iterations': function(test) {
+    this.scope.counterA = 0;
+    this.scope.counterB = 0;
+
+    this.scope.$watch(
+        function(scope) { return scope.counterA; },
+        function(newValue, oldValue, scope) {
+          scope.counterB++;
+        }
+    );
+
+    this.scope.$watch(
+        function(scope) { return scope.counterB; },
+        function(newValue, oldValue, scope) {
+          scope.counterA++;
+        }
+    );
+
+    test.throws(
+        function() { this.scope.$digest(); },
+        Error,
+        'digest throws an error for there are cyclic watchers and listeners.'
+        );
+
+    test.done();
+  },
 };

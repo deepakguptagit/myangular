@@ -1,0 +1,19 @@
+Learnings
+
+Scope:
+
+1) Attaching data to scope does not by itself have an impact on performance. If
+no watcher is watching a property, it doesn't matter if it's on the scope or
+not. Angular does not iterate over properties of scope. It iterates over the
+watches.
+
+2) Every watch function is called during every $digest. For this reason, it's a
+good idea to pay attention to the number of watches you have, as well as the
+performance of each individual watch function or expression.
+
+3) Watch functions should be idempotent: A watch function should have no side
+effects or only side effects that can happen any number of times. If, for
+example, a watch function fires an Ajax request, there are no guarantees about
+how many requests your app is making.
+
+
