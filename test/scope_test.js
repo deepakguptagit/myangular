@@ -2,6 +2,7 @@
 
 var scope_module = require('../lib/scope.js');
 var sinon = require('sinon');
+var _ = require('lodash');
 
 exports['Scope'] = {
   setUp: function(done) {
@@ -165,6 +166,33 @@ exports['Digest'] = {
         'digest throws an error for there are cyclic watchers and listeners.'
         );
 
+    test.done();
+  },
+
+  'ends the digest when the last watch is clean': function(test) {
+    var scope = this.scope;
+    scope.array = _.range(100);
+
+    var watchExecutions = 0;
+
+    _.times(100, function(i) {
+      var self = 
+      scope.$watch(
+          function(scope) {
+            watchExecutions++;
+            return scope.array[i];
+          },
+          function(newValue, oldValue, scope) {
+          }
+      );
+    });
+
+    scope.$digest();
+    test.equal(watchExecutions, 200, 'There were 200 watch executions for the first time');
+
+    scope.array[0] = 420;
+    scope.$digest();
+    test.equal(watchExecutions, 301, 'There were 301 executions when first watcher\'s var was changed.');
     test.done();
   },
 };
