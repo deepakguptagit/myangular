@@ -22,7 +22,7 @@
   ],
   "main": "lib/myangular",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": "= 0.10.25"
   },
   "scripts": {
     "test": "grunt nodeunit"
