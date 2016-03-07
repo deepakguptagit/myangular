@@ -302,4 +302,42 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'executes $evalAsync functions even when not dirty': function(test) {
+    this.scope.aValue = [1, 2, 3];
+    this.scope.asyncEvaluatedTimes = 0;
+
+    this.scope.$watch(
+        function(scope) {
+          if (scope.asyncEvaluatedTimes < 2) {
+            scope.$evalAsync(function(scope) {
+              scope.asyncEvaluatedTimes++;
+            });
+          }
+        },
+        function(newValue, oldValue, scope) {}
+    );
+
+    this.scope.$digest();
+    test.equal(this.scope.asyncEvaluatedTimes, 2, 'All asyn task from watchers were executed.');
+
+    test.done();
+  },
+
+  'eventually halts $evalAsyncs added by watches': function(test) {
+    this.scope.aValue = [1, 2, 3];
+
+    this.scope.$watch(
+        function(scope) {
+          scope.$evalAsync(function(scope) { });
+          return scope.aValue;
+        },
+        function(newValue, oldValue, scope) {}
+    );
+
+    test.throws(function() { this.scope.$digest(); }, Error, 'Throws error if watch is always starting async jobs.');
+
+    test.done();
+  },
 };
+
