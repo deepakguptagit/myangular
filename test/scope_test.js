@@ -280,4 +280,26 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'executes $evalAsync\'ed function later in same cycle': function(test) {
+    this.scope.aValue = [1, 2, 3];
+    this.scope.asyncEvaluated = false;
+    this.scope.asyncEvaluatedImmediately = false;
+
+    this.scope.$watch(
+        function(scope) { return scope.aValue; },
+        function(newValue, oldValue, scope) {
+          scope.$evalAsync(function(scope) {
+            scope.asyncEvaluated = true;
+          });
+          scope.asyncEvaluatedImmediately = scope.asyncEvaluated;
+        }
+    );
+
+    this.scope.$digest();
+    test.equal(this.scope.asyncEvaluated, true, 'asynchronous function was executed in same digest cycle.');
+    test.equal(this.scope.asyncEvaluatedImmediately, false, 'async function wasn\'t executed immediately.');
+
+    test.done();
+  },
 };
