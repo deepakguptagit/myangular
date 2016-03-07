@@ -216,4 +216,24 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'correctly handle NaNs': function(test) {
+    this.scope.number = 0/0; // Nan
+    this.scope.counter = 0;
+
+    this.scope.$watch(
+        function(scope) { return scope.number; },
+        function(newValue, oldValue, scope) {
+          scope.counter++;
+        }
+    );
+
+    this.scope.$digest();
+    test.equal(this.scope.counter, 1, 'listener was called for the first time.')
+
+    this.scope.$digest();
+    test.equal(this.scope.counter, 1, 'Unequality of two NaNs does not lets listener called yet again.');
+
+    test.done();
+  },
 };
