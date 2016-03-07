@@ -260,4 +260,24 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'executed $apply\'ed function and starts the digest': function(test) {
+    this.scope.aValue = 'someValue';
+    this.scope.counter = 0;
+
+    this.scope.$watch(
+        function(scope) { return scope.aValue; },
+        function(newValue, oldValue, scope) { scope.counter++; }
+    );
+
+    this.scope.$digest();
+    test.equal(this.scope.counter, 1, 'listener was invoked in first digest');
+
+    this.scope.$apply(function(scope) {
+      scope.aValue = 'someOtherValue';
+    });
+    test.equal(this.scope.counter, 2, 'listener was invoked if watched variable is changed in $apply');
+
+    test.done();
+  },
 };
