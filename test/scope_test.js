@@ -339,5 +339,31 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'has a $$phase field whose value is the current digestion phase': function(test) {
+    this.scope.aValue = [1, 2, 3];
+    this.scope.phaseInWatchFunction = undefined;
+    this.scope.phaseInListenerFunction = undefined;
+    this.scope.phaseInApplyFunction = undefined;
+
+    this.scope.$watch(
+        function(scope) {
+          scope.phaseInWatchFunction = scope.$$phase;
+        },
+        function(newValue, oldValue, scope) {
+          scope.phaseInListenerFunction = scope.$$phase;
+        }
+    );
+
+    this.scope.$apply(function(scope) {
+      scope.phaseInApplyFunction = scope.$$phase;
+    });
+
+    test.equal(this.scope.phaseInWatchFunction, '$digest', 'phase was correctly set while executing watcher.');
+    test.equal(this.scope.phaseInListenerFunction, '$digest', 'phase was correctly set while executing listener.');
+    test.equal(this.scope.phaseInApplyFunction, '$apply', 'phase was correctly set while executing apply.');
+
+    test.done();
+  },
 };
 
