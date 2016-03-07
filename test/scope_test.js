@@ -176,7 +176,6 @@ exports['Digest'] = {
     var watchExecutions = 0;
 
     _.times(100, function(i) {
-      var self = 
       scope.$watch(
           function(scope) {
             watchExecutions++;
@@ -193,6 +192,28 @@ exports['Digest'] = {
     scope.array[0] = 420;
     scope.$digest();
     test.equal(watchExecutions, 301, 'There were 301 executions when first watcher\'s var was changed.');
+    test.done();
+  },
+
+  'compares based on value if enabled': function(test) {
+    this.scope.aValue = [1, 2, 3];
+    this.scope.counter = 0;
+
+    this.scope.$watch(
+        function(scope) { return scope.aValue; },
+        function(newValue, oldValue, scope) {
+          scope.counter++;
+        },
+        true
+    );
+
+    this.scope.$digest();
+    test.equal(this.scope.counter, 1, 'counter was 1 when scope was called only once.');
+
+    this.scope.aValue.push(4);
+    this.scope.$digest();
+    test.equal(this.scope.counter, 2, 'change in value was detected when value of watched object is changed.');
+
     test.done();
   },
 };
