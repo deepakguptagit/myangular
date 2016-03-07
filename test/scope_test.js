@@ -236,4 +236,28 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'executed $eval\'ed function and returns result': function(test) {
+    this.scope.aValue = 42;
+
+    var result = this.scope.$eval(function(scope) {
+      return scope.aValue;
+    });
+
+    test.equal(result, 42, 'expression is evaluated as is.');
+
+    test.done();
+  },
+
+  'passes the second $eval argument straight through': function(test) {
+    this.scope.aValue = 42;
+
+    var result = this.scope.$eval(function(scope, arg) {
+      return scope.aValue + arg;
+    }, 2);
+
+    test.equal(result, 44, 'expression is evaluated successfully with extra argument');
+
+    test.done();
+  },
 };
