@@ -365,5 +365,27 @@ exports['Digest'] = {
 
     test.done();
   },
+
+  'schedules a digest in $evalAsync': function(test) {
+    var scope = this.scope;
+    scope.aValue = 'abc';
+    scope.counter = 0;
+
+    scope.$watch(
+        function(scope) { return scope.aValue; },
+        function(newValue, oldValue, scope) {
+          scope.counter++;
+        }
+    );
+
+    scope.$evalAsync(function(scope) {});
+
+    test.equal(scope.counter, 0, 'no digest cycle was run with only evalAsync.');
+
+    setTimeout(function() {
+      test.equal(scope.counter, 1, 'digest cycle was run eventually.');
+      test.done();
+    }, 50);
+  },
 };
 
