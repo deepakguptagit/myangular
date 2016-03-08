@@ -387,5 +387,79 @@ exports['Digest'] = {
       test.done();
     }, 50);
   },
+
+  'allows async $apply with $applyAsync': function(test) {
+    var scope = this.scope;
+
+    scope.counter = 0;
+
+    scope.$watch(
+        function(scope) { return scope.aValue; },
+        function(newValue, oldValue, scope) { scope.counter++; }
+    );
+
+    scope.$digest();
+    test.equal(scope.counter, 1, 'Initial digest cycle run.');
+
+    scope.$applyAsync(function(scope) {
+      scope.aValue = 'abc';
+    });
+    test.equal(scope.counter, 1, 'digest wasn\'t immediately scheduled after applyAsync');
+
+    setTimeout(function() {
+      test.equal(scope.counter, 2, 'digest cycle was run eventually.');
+      test.done();
+    }, 50);
+  },
+
+  'never executes $applyAsync\'ed function in the same cycle.': function(test) {
+    var scope = this.scope;
+    scope.aValue = [1, 2, 3];
+    scope.asyncApplied = false;
+
+    scope.$watch(
+        function(scope) { return scope.aValue; },
+        function(newValue, oldValue, scope) {
+          scope.$applyAsync(function(scope) {
+            scope.asyncApplied = true;
+          });
+        }
+    );
+
+    scope.$digest();
+    test.equal(scope.asyncApplied, false, 'Async wasn\'t applied immediately');
+
+    setTimeout(function() {
+      test.equal(scope.asyncApplied, true, 'Aync was applied eventually');
+      test.done();
+    }, 50);
+  },
+
+  'coalesces many calls to $applySync': function(test) {
+    var scope = this.scope;
+
+    scope.counter = 0;
+
+    scope.$watch(
+        function(scope) {
+          scope.counter++;
+          return scope.aValue;
+        },
+        function(newValue, oldValue, scope) { }
+    );
+
+    scope.$applyAsync(function(scope) {
+      scope.aValue = 'abc';
+    });
+    scope.$applyAsync(function(scope) {
+      scope.aValue = 'def';
+    });
+
+    setTimeout(function() {
+      test.equal(scope.counter, 2, 'digest was called only once');
+      test.done();
+    }, 50);
+  },
+
 };
 
