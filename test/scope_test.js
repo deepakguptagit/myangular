@@ -12,7 +12,7 @@ exports['Scope'] = {
   'scope can be constructed and used as an object': function(test) {
     var scope = new scope_module.Scope();
     scope.aProperty = 1;
-    test.equal(scope.aProperty, 1, 'scope object can be constructed.');
+    test.equal(scope.aProperty, 1, 'scope object can\'t be constructed.');
     test.done();
   },
 };
@@ -31,7 +31,7 @@ exports['Digest'] = {
 
     this.scope.$digest();
 
-    test.equal(listenerFn.called, true, 'listener function was called.');
+    test.equal(listenerFn.called, true, 'listener function wasn\'t called.');
     test.done();
   },
 
@@ -42,7 +42,7 @@ exports['Digest'] = {
 
     this.scope.$digest();
 
-    test.equal(watchFn.calledWith(this.scope), true, 'watcher function was called.');
+    test.equal(watchFn.calledWith(this.scope), true, 'watcher function wasn\'t called.');
     test.done();
   },
 
@@ -55,19 +55,19 @@ exports['Digest'] = {
         function(newValue, oldValue, scope) { scope.counter++; }
         );
 
-    test.equal(this.scope.counter, 0, 'scope counter was initialized with 0');
+    test.equal(this.scope.counter, 0, 'scope counter wasn\'t initialized with 0');
 
     this.scope.$digest();
-    test.equal(this.scope.counter, 1, 'scope counter was 1 after calling digest once');
+    test.equal(this.scope.counter, 1, 'scope counter was\'t 1 after calling digest once');
 
     this.scope.$digest();
-    test.equal(this.scope.counter, 1, 'scope counter was 1 after calling digest twice');
+    test.equal(this.scope.counter, 1, 'scope counter was\'t 1 after calling digest twice');
 
     this.scope.someValue = 'b';
-    test.equal(this.scope.counter, 1, 'somevalue is changed but digest is not called.');
+    test.equal(this.scope.counter, 1, 'somevalue is changed but digest is also called.');
 
     this.scope.$digest();
-    test.equal(this.scope.counter, 2, 'scope counter was 2 after some value changed and digest called.');
+    test.equal(this.scope.counter, 2, 'scope counter was\'t 2 after some value changed and digest called.');
 
     test.done();
 
@@ -79,11 +79,11 @@ exports['Digest'] = {
     this.scope.$watch(
         function(scope) { return scope.someValue; },
         function(newValue, oldValue, scope) { scope.counter++;}
-        );
+    );
 
     this.scope.$digest();
 
-    test.equal(this.scope.counter, 1, 'call to $digest when watched value is not initialized.');
+    test.equal(this.scope.counter, 1, 'call to $digest when watched value is initialized.');
     test.done();
   },
 
@@ -98,7 +98,7 @@ exports['Digest'] = {
 
     this.scope.$digest();
 
-    test.equal(oldValueGiven, 123, 'call to $digest when watched value is not initialized.');
+    test.equal(oldValueGiven, 123, 'call to $digest when watched value is initialized.');
     test.done();
   },
 
@@ -107,7 +107,7 @@ exports['Digest'] = {
     this.scope.$watch(watchFn);
     this.scope.$digest();
 
-    test.equal(watchFn.called, true, 'watch fn was called without the corresponding listener');
+    test.equal(watchFn.called, true, 'watch fn wasn\'t called without the corresponding listener');
     test.done();
   },
 
@@ -133,11 +133,11 @@ exports['Digest'] = {
     );
 
     this.scope.$digest();
-    test.equal(this.scope.initial, 'D.', 'compares initial in first digest cycle');
+    test.equal(this.scope.initial, 'D.', 'does not compares initial in first digest cycle');
 
     this.scope.name = 'Gokul';
     this.scope.$digest();
-    test.equal(this.scope.initial, 'G.', 'compares initial when name changed and after second digest cycle.');
+    test.equal(this.scope.initial, 'G.', 'does not compares initial when name changed and after second digest cycle.');
 
     test.done();
   },
@@ -163,7 +163,7 @@ exports['Digest'] = {
     test.throws(
         function() { this.scope.$digest(); },
         Error,
-        'digest throws an error for there are cyclic watchers and listeners.'
+        'digest does not throws an error for there are cyclic watchers and listeners.'
         );
 
     test.done();
@@ -187,11 +187,11 @@ exports['Digest'] = {
     });
 
     scope.$digest();
-    test.equal(watchExecutions, 200, 'There were 200 watch executions for the first time');
+    test.equal(watchExecutions, 200, 'There weren\'t 200 watch executions for the first time');
 
     scope.array[0] = 420;
     scope.$digest();
-    test.equal(watchExecutions, 301, 'There were 301 executions when first watcher\'s var was changed.');
+    test.equal(watchExecutions, 301, 'There weren\'t 301 executions when first watcher\'s var was changed.');
     test.done();
   },
 
@@ -208,11 +208,11 @@ exports['Digest'] = {
     );
 
     this.scope.$digest();
-    test.equal(this.scope.counter, 1, 'counter was 1 when scope was called only once.');
+    test.equal(this.scope.counter, 1, 'counter wasn\'t 1 when scope was called only once.');
 
     this.scope.aValue.push(4);
     this.scope.$digest();
-    test.equal(this.scope.counter, 2, 'change in value was detected when value of watched object is changed.');
+    test.equal(this.scope.counter, 2, 'change in value wasn\'t detected when value of watched object is changed.');
 
     test.done();
   },
@@ -229,10 +229,10 @@ exports['Digest'] = {
     );
 
     this.scope.$digest();
-    test.equal(this.scope.counter, 1, 'listener was called for the first time.')
+    test.equal(this.scope.counter, 1, 'listener wasn\'t called for the first time.')
 
     this.scope.$digest();
-    test.equal(this.scope.counter, 1, 'Unequality of two NaNs does not lets listener called yet again.');
+    test.equal(this.scope.counter, 1, 'Unequality of two NaNs lets listener called yet again.');
 
     test.done();
   },
@@ -244,7 +244,7 @@ exports['Digest'] = {
       return scope.aValue;
     });
 
-    test.equal(result, 42, 'expression is evaluated as is.');
+    test.equal(result, 42, 'expression is not evaluated as is.');
 
     test.done();
   },
@@ -256,7 +256,7 @@ exports['Digest'] = {
       return scope.aValue + arg;
     }, 2);
 
-    test.equal(result, 44, 'expression is evaluated successfully with extra argument');
+    test.equal(result, 44, 'expression did not be evaluated with extra argument');
 
     test.done();
   },
@@ -271,12 +271,12 @@ exports['Digest'] = {
     );
 
     this.scope.$digest();
-    test.equal(this.scope.counter, 1, 'listener was invoked in first digest');
+    test.equal(this.scope.counter, 1, 'listener was not invoked in first digest');
 
     this.scope.$apply(function(scope) {
       scope.aValue = 'someOtherValue';
     });
-    test.equal(this.scope.counter, 2, 'listener was invoked if watched variable is changed in $apply');
+    test.equal(this.scope.counter, 2, 'listener was not invoked if watched variable is changed in $apply');
 
     test.done();
   },
@@ -319,7 +319,7 @@ exports['Digest'] = {
     );
 
     this.scope.$digest();
-    test.equal(this.scope.asyncEvaluatedTimes, 2, 'All asyn task from watchers were executed.');
+    test.equal(this.scope.asyncEvaluatedTimes, 2, 'All asyn task from watchers were not executed.');
 
     test.done();
   },
@@ -335,7 +335,7 @@ exports['Digest'] = {
         function(newValue, oldValue, scope) {}
     );
 
-    test.throws(function() { this.scope.$digest(); }, Error, 'Throws error if watch is always starting async jobs.');
+    test.throws(function() { this.scope.$digest(); }, Error, 'does not throws error if watch is always starting async jobs.');
 
     test.done();
   },
@@ -359,9 +359,9 @@ exports['Digest'] = {
       scope.phaseInApplyFunction = scope.$$phase;
     });
 
-    test.equal(this.scope.phaseInWatchFunction, '$digest', 'phase was correctly set while executing watcher.');
-    test.equal(this.scope.phaseInListenerFunction, '$digest', 'phase was correctly set while executing listener.');
-    test.equal(this.scope.phaseInApplyFunction, '$apply', 'phase was correctly set while executing apply.');
+    test.equal(this.scope.phaseInWatchFunction, '$digest', 'phase was not correctly set while executing watcher.');
+    test.equal(this.scope.phaseInListenerFunction, '$digest', 'phase was not correctly set while executing listener.');
+    test.equal(this.scope.phaseInApplyFunction, '$apply', 'phase was not correctly set while executing apply.');
 
     test.done();
   },
@@ -380,10 +380,10 @@ exports['Digest'] = {
 
     scope.$evalAsync(function(scope) {});
 
-    test.equal(scope.counter, 0, 'no digest cycle was run with only evalAsync.');
+    test.equal(scope.counter, 0, 'digest cycle was run with only evalAsync.');
 
     setTimeout(function() {
-      test.equal(scope.counter, 1, 'digest cycle was run eventually.');
+      test.equal(scope.counter, 1, 'digest cycle did not run eventually.');
       test.done();
     }, 50);
   },
@@ -399,15 +399,15 @@ exports['Digest'] = {
     );
 
     scope.$digest();
-    test.equal(scope.counter, 1, 'Initial digest cycle run.');
+    test.equal(scope.counter, 1, 'Initial digest cycle didn\'t run.');
 
     scope.$applyAsync(function(scope) {
       scope.aValue = 'abc';
     });
-    test.equal(scope.counter, 1, 'digest wasn\'t immediately scheduled after applyAsync');
+    test.equal(scope.counter, 1, 'digest cycle was immediately scheduled after applyAsync');
 
     setTimeout(function() {
-      test.equal(scope.counter, 2, 'digest cycle was run eventually.');
+      test.equal(scope.counter, 2, 'digest cycle didn\'t run eventually.');
       test.done();
     }, 50);
   },
@@ -427,10 +427,10 @@ exports['Digest'] = {
     );
 
     scope.$digest();
-    test.equal(scope.asyncApplied, false, 'Async wasn\'t applied immediately');
+    test.equal(scope.asyncApplied, false, 'Async was applied immediately');
 
     setTimeout(function() {
-      test.equal(scope.asyncApplied, true, 'Aync was applied eventually');
+      test.equal(scope.asyncApplied, true, 'Aync wasn\'t applied eventually');
       test.done();
     }, 50);
   },
@@ -456,10 +456,42 @@ exports['Digest'] = {
     });
 
     setTimeout(function() {
-      test.equal(scope.counter, 2, 'digest was called only once');
+      test.equal(scope.counter, 2, 'digest wasn\'t called only once');
       test.done();
     }, 50);
   },
+
+  'cancels and flushes $applyAsync if digested first': function(test) {
+    var scope = this.scope;
+
+    scope.counter = 0;
+    scope.aValue = 'xyz';
+
+    scope.$watch(
+        function(scope) {
+          scope.counter++;
+          return scope.aValue;
+        },
+        function(newValue, oldValue, scope) { }
+    );
+
+    scope.$applyAsync(function(scope) {
+      scope.aValue = 'abc';
+    });
+    scope.$applyAsync(function(scope) {
+      scope.aValue = 'def';
+    });
+
+    scope.$digest();
+
+    test.equal(scope.counter, 2, 'applyAsync wasn\'t cleared during first digest');
+    test.equal(scope.aValue, 'def', 'both applyAsync did not run successfully');
+
+    setTimeout(function() {
+      test.equal(scope.counter, 2, 'digest was run after clearing asyncQueue');
+      test.done();
+    }, 50);
+  }
 
 };
 
